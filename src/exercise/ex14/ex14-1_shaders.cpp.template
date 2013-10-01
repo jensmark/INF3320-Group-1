@@ -1,0 +1,301 @@
+/* $Id: ex14-1_shaders.cpp,v 1.0 2010/10/25 21:00:00 bartloms Exp $
+ *
+ * (C) 2010 Bartlomiej Siwek <bartloms@ifi.uio.no>
+ *
+ * Distributed under the GNU GPL.
+ */
+
+#include <string>
+#include <gl/glut.h>
+#include "OpenGLError.hpp"
+#include "ReadTextfile.hpp"
+
+//Shaders source
+std::string vertexShader = "";
+std::string fragmentShader = "";
+
+//Shader OpenGL identifies
+GLuint vertexShaderId = -1;
+GLuint fragmentShaderId = -1;
+GLuint shaderProgramId = -1;
+
+//Rotation variables
+GLdouble rotationX = 0;
+GLdouble rotationY = 0;
+
+//Model type
+enum ModelType {
+  TEAPOT,
+  SPHERE,
+  TORUS
+};
+ModelType currentModel = TEAPOT;
+
+void setupShaders()
+{  
+  //Variable to hold compile status
+  GLint compileStatus;
+  
+  //Vertex shader
+  const GLchar *vertexShaderSourceTemp = vertexShader.c_str();
+  
+  vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(vertexShaderId, 1, &vertexShaderSourceTemp, NULL);
+  glCompileShader(vertexShaderId);
+  
+  glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &compileStatus);
+  if(!compileStatus)
+  {
+    GLint length;
+    GLchar *log;
+    
+    glGetShaderiv(vertexShaderId, GL_INFO_LOG_LENGTH, &length);
+    log = new GLchar[length];
+    glGetShaderInfoLog(vertexShaderId, length, &length, log);
+    std::cout << "vertex shader compile log:" << std::endl << log << std::endl;
+    delete [] log;
+    
+    glDeleteShader(vertexShaderId);
+    vertexShaderId = -1;
+  }
+  
+  //Fragment shader
+  const GLchar *fragmentShaderSourceTemp = fragmentShader.c_str();  
+  
+  fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fragmentShaderId, 1, &fragmentShaderSourceTemp, NULL);
+  glCompileShader(fragmentShaderId);
+  
+  glGetShaderiv(fragmentShaderId, GL_COMPILE_STATUS, &compileStatus);
+  if(!compileStatus)
+  {
+    GLint length;
+    GLchar *log;
+    
+    glGetShaderiv(fragmentShaderId, GL_INFO_LOG_LENGTH, &length);
+    log = new GLchar[length];
+    glGetShaderInfoLog(fragmentShaderId, length, &length, log);
+    std::cout << "Fragment shader compile log:" << std::endl << log << std::endl;
+    delete [] log;
+    
+    glDeleteShader(fragmentShaderId);
+    fragmentShaderId = -1;
+  }
+  
+  //Shader program
+  if(vertexShaderId != -1 && fragmentShaderId != -1)
+  {
+    shaderProgramId = glCreateProgram();
+    glAttachShader(shaderProgramId, vertexShaderId);
+    glAttachShader(shaderProgramId, fragmentShaderId);
+    glLinkProgram(shaderProgramId);
+    
+    GLint linkStatus;
+    glGetProgramiv(shaderProgramId, GL_LINK_STATUS, &linkStatus);
+    if(!linkStatus)
+    {
+      GLint length;
+      GLchar *log;
+      
+      glGetProgramiv(shaderProgramId, GL_INFO_LOG_LENGTH, &length);
+      log = new GLchar[length];
+      glGetProgramInfoLog(shaderProgramId, length, &length, log);
+      std::cout << "Shader program link log:" << std::endl << log << std::endl;
+      delete [] log;
+      
+      glDeleteProgram(shaderProgramId);
+      shaderProgramId = -1;      
+    }
+  }
+  else 
+  {
+    shaderProgramId = -1;
+  }
+}
+
+void myInit()
+{
+  //Default clear color
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  
+  //Light atributes
+  GLfloat black_light[]     = {  0.0f,  0.0f,  0.0f,  1.0f };
+  GLfloat white_light[]     = {  1.0f,  1.0f,  1.0f,  1.0f };
+  
+  //Setup light 0
+  glLightfv(GL_LIGHT0, GL_DIFFUSE,  white_light);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
+  glLightfv(GL_LIGHT0, GL_AMBIENT,  black_light);
+  
+  //Lighting model
+  GLfloat global_ambient[] = { 0.2, 0.2, 0.2, 1.0 };  
+  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+  
+  //Enable whats needed
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+  
+  //Compile shaders
+  setupShaders();
+  
+  CHECK_OPENGL;
+}
+
+void myDisplay()
+{
+  //Clear all
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+  //Reset transform
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
+  //Light stationary with regard to camera
+  GLfloat light0_position[] = {  1.0f,  1.0f,  -2.0f,  1.0f };
+  glLightfv(GL_LIGHT0, GL_POSITION, light0_position);
+  
+  //Setup camera position
+  glTranslatef(0.0f, 0.0f, -3.0f);
+  glRotatef(rotationX, 1.0f, 0.0f, 0.0f);
+  glRotatef(rotationY, 0.0f, 1.0f, 0.0f);
+  
+  //Setup material properties
+  GLfloat mat_ambient[]   = { 0.5, 0.3, 1.0, 1.0 }; 
+  GLfloat mat_diffuse[]   = { 0.3, 0.5, 1.0, 1.0 }; 
+  GLfloat mat_specular[]  = { 1.0, 1.0, 1.0, 1.0 }; 
+  GLfloat mat_shininess   = 50.0 ; 
+  
+  //Setup material
+  glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess);
+  
+  //Use shaders
+  if(shaderProgramId != -1)
+  {
+    glUseProgram(shaderProgramId);
+  }
+  
+  //Setup & draw model
+  switch(currentModel)
+  {
+    case TEAPOT:
+      glutSolidTeapot(1.0);
+      break;
+    case SPHERE:
+      glutSolidSphere(1.0f, 20, 20);
+      break;
+    case TORUS:
+      glutSolidTorus(0.5f, 1.0f, 20, 20);
+      break;
+  }
+  
+  
+  //Flush and swap buffers
+	glFlush();
+	glutSwapBuffers();
+  
+  CHECK_OPENGL;
+}
+
+void myReshape(int width, int height)
+{
+  //Setup projection
+  GLdouble aspectRatio = (GLdouble)width / height;
+  
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  if ( aspectRatio < 1.0 )
+  {
+    // window taller than wide
+    glFrustum(-1.0f, 1.0f, -1.0f / aspectRatio, 1.0f / aspectRatio, 1.0f, 10.0f);
+  }
+  else
+  {
+    glFrustum(-aspectRatio, aspectRatio, -1.0f, 1.0f, 1.0f, 10.0f);
+  }
+
+  //Setup viewport
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+	CHECK_OPENGL;
+}
+
+inline GLdouble fixRotationAngle(GLdouble angle)
+{
+  if(angle >= (GLdouble)360.0f)
+  {
+    return angle - 360.0f;
+  }
+  if(angle < (GLdouble)0.0f)
+  {
+    return angle + 360.0f;
+  }
+  return angle;
+}
+
+void myKeyboard(unsigned char key, int /*x*/, int /*y*/)
+{
+	switch(key)
+  {
+    case 'q': 
+      std::exit(0); 
+      break;  
+    case 'w': 
+      rotationX -= 5.0f;
+      rotationX = fixRotationAngle(rotationX);
+      break;
+    case 's': 
+      rotationX += 5.0f; 
+      rotationX = fixRotationAngle(rotationX);
+      break;
+    case 'a':
+      rotationY -= 5.0f; 
+      rotationY = fixRotationAngle(rotationY);
+      break;
+    case 'd': 
+      rotationY += 5.0f; 
+      rotationY = fixRotationAngle(rotationY);
+      break;
+    case '1':
+      currentModel = TEAPOT;
+      break;
+    case '2':
+      currentModel = SPHERE;
+      break;
+    case '3':
+      currentModel = TORUS;
+      break;
+	}
+  
+	glutPostRedisplay();
+}
+
+int main(int argc, char **argv)
+{
+  //Load vertex shader
+  if(argc >= 2)
+  {
+    vertexShader = ReadTextfile(argv[1]);
+  }
+  
+  //Load fragment shader
+  if(argc >= 3)
+  {
+    fragmentShader = ReadTextfile(argv[2]);
+  }
+  
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitWindowSize(800, 600);
+	glutCreateWindow( __FILE__ );
+	glutDisplayFunc(myDisplay);
+  glutReshapeFunc(myReshape);
+	glutKeyboardFunc(myKeyboard);
+  
+	myInit();
+	glutMainLoop();
+	return 0;
+}
