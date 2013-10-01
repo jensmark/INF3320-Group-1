@@ -1,0 +1,50 @@
+/* $Id: ex2-1_white_square.cpp, v1.3 2011/09/05$
+ * 
+ * Author: Christopher Dyken, <dyken@cma.uio.no>
+ * Reviewed by: Bartlomiej Siwek, <bartloms@ifi.uio.no>
+ *
+ * Distributed under the GNU GPL.
+ */
+
+#include <iostream>
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+#include <glm/glm.hpp>
+#include "OpenGLError.hpp"
+
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+
+void myInit() {
+  // ... insert your code here ...
+  // ... end of your code ...
+
+  CHECK_OPENGL;
+}
+
+void myReshape(int w, int h) {
+  // ... insert your code here ...
+  // ... end of your code ...
+
+  CHECK_OPENGL;  
+}
+
+void myDisplay() {
+  // ... insert your code here ...
+  // ... end of your code ...
+
+  glFlush();
+  glutSwapBuffers();  
+  CHECK_OPENGL;  
+}
+
+void myShutdown() {
+  // ... insert your code here ...
+  // ... end of your code ...
+}
+
+int main(int argc, char **argv) {
+  // ... insert your code here ...
+  // ... end of your code ...
+
+  return 0;
+}
