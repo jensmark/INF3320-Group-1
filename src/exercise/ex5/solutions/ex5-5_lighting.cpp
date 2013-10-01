@@ -1,0 +1,272 @@
+/* $Id: ex5-3_lighting.cpp,v 1.2 2006/08/17 12:06:39 dyken Exp $
+ *
+ * (C) 2005 Christopher Dyken, <dyken@cma.uio.no>
+ *
+ * Distributed under the GNU GPL.
+ */
+
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "NoiseSampler.hpp"
+
+/** Light source structure. */
+struct Light {
+  Light(const glm::vec3& pos, const glm::vec3& color)
+      : m_pos(pos), m_color(color) {
+  }
+
+  glm::vec3 m_pos;    // Position of light source.
+  glm::vec3 m_color;  // Color of light source.
+};
+
+/** Reflect dir about the surface normal n. */
+glm::vec3 reflect(const glm::vec3& n, const glm::vec3& dir) {
+  // skip
+  return 2.0f*glm::dot(dir, n)*n - dir;
+  // unskip
+}
+
+/** Element by element product of two vectors. Used to blend colors. */
+glm::vec3 combine(const glm::vec3& a, const glm::vec3& b) {
+  return glm::vec3(a[0]*b[0], a[1]*b[1], a[2]*b[2]);
+}
+
+/** Given surface properties, shade using phong shading.
+ * 
+ * \param[in] p         The 3d position to be shaded.
+ * \param[in] n         The surface normal at p.
+ * \param[in] ambient   Material ambient color.
+ * \param[in] diffuse   Material diffuse color.
+ * \param[in] specular  Material specular color.
+ * \param[in] shininess Material shininess coefficient.
+ * \param[in] lights    Vector of light sources to use.
+ * 
+ * \returns The color of the shaded point.
+ */
+glm::vec3 phong(const glm::vec3& p,
+                const glm::vec3& n,
+                const glm::vec3& v,
+                const glm::vec3& ambient,
+                const glm::vec3& diffuse,
+                const glm::vec3& specular,
+                float            shininess,
+                const std::vector<Light>& lights) {
+  // skip
+  glm::vec3 ret = ambient;
+  for (unsigned int i=0; i < lights.size(); i++) {
+    glm::vec3 l = lights[i].m_pos - p;
+    l = glm::normalize(l);
+
+    float dif = glm::dot(n,l);
+    if (dif > 0.0) {
+      ret = ret + dif*combine(diffuse, lights[i].m_color);
+    }
+
+    glm::vec3 r = reflect(n,v);
+    float spec = glm::dot(r,l);
+    if (spec > 0.0) {
+      spec = glm::pow(spec, shininess);
+      ret = ret + spec*combine(specular, lights[i].m_color);
+    }
+  }
+  return ret;
+  // unskip
+}
+
+/*************************************************************
+ **                                                         **
+ **                      Test program                       **
+ **                                                         **
+ *************************************************************/
+
+/** Vector of light sources. */
+static std::vector<Light> lights;
+
+/** Hard-coded image dimensions. */
+#define IMAGE_WIDTH 300
+#define IMAGE_HEIGHT 300
+
+GLubyte image[IMAGE_HEIGHT][IMAGE_WIDTH][4];
+int pos;
+
+/** Calculates the intersection between a ray and a sphere
+ * 
+ * \param[out] res           The parameter value of hit along ray.
+ * \param[in]  sph_origin    Origin of sphere to be intersected.
+ * \param[in]  sph_radius    Radius of sphere to be intersected.
+ * \param[in]  ray_origin    Origin of intersection ray.
+ * \param[in]  ray_direction Direction of intersection ray.
+ * \returns                  If one or more intersections are present or not.
+ */
+bool
+intersectSphereRay(float& res,
+                   const glm::vec3& sph_origin,
+                   float            sph_radius,
+                   const glm::vec3& ray_origin,
+                   const glm::vec3& ray_direction ) {
+  glm::vec3 vec = ray_origin - sph_origin;
+  double A = 1.0;
+  double B = 2.0*glm::dot(ray_direction, vec);
+  double C = glm::dot(vec, vec) - sph_radius*sph_radius;
+
+  double tmp = B*B - 4.0*A*C, r;
+
+  // no real solutions (root of neg. number)
+  if (tmp < 0.0) {
+    return false;
+  }
+  
+  // one real solution
+  if (tmp < std::numeric_limits<float>::epsilon()) {
+    r = -0.5*B/A;
+    if (r > std::numeric_limits<float>::epsilon()) {
+      res = r;
+      return true;
+    }
+    return false;
+  }
+
+  // two solutions
+  tmp = sqrt(tmp);
+
+  // nearest root
+  if ((r = 0.5*(-B-tmp)/A) > std::numeric_limits<float>::epsilon()) {
+    res = r;
+    return true;
+  }
+  
+  // farthest root
+  if ((r = 0.5*(-B+tmp)/A) > std::numeric_limits<float>::epsilon()) {
+    res = r;
+    return true;
+  }
+
+  // no hit
+  return false;
+}
+
+/** Raytrace the scene using a given ray.
+ * 
+ * \param[in] origin    Origin of ray to trace.
+ * \param[in] direction Direction of ray to trace.
+ * \returns             The color corresponding to the ray.
+ */
+glm::vec3 raytrace(const glm::vec3& origin, const glm::vec3& direction ) {
+  static glm::vec3 sph_origin( 0.0, 0.0, -1.0 );
+  static float sph_radius = 1.0;
+
+  float t;
+  if (intersectSphereRay(t, sph_origin, sph_radius, origin, direction)) {
+    GfxUtil::NoiseSampler noise;
+
+    glm::vec3 p = origin + t*direction;    // intersection point
+    glm::vec3 n = p - sph_origin;      // normal vector @ intersection
+    n = glm::normalize(n);
+
+    return phong(p, n, -direction, glm::vec3(0.0, 0.0, 0.0), noise.turbulence(p)*glm::vec3(0.8, 0.8, 1.0),
+                 glm::vec3(1.0, 1.0, 1.0), 10.0, lights);
+  } else {
+    // otherwise sample the environment
+    return glm::vec3( 0.0, 0.5*(direction[1]+1.0), 0.8*(direction[1]+1.0));
+  }
+}
+
+void myInit() {
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+  // Our data is not padded in any way, i.e. byte alignment
+  glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+
+  // Set initial image to black
+  std::fill_n(&image[0][0][0], IMAGE_WIDTH*IMAGE_HEIGHT*4, 0);
+
+  // Create a white and red light sources.
+  lights.push_back(Light(glm::vec3(2.0, 1.0, 1.5), glm::vec3(1.0, 1.0, 1.0)) );
+  lights.push_back(Light(glm::vec3(-2.0, 0.5, 1.0), glm::vec3(0.5, 0.2, 0.1)) );
+}
+
+void myDisplay() {
+  glClear(GL_COLOR_BUFFER_BIT);
+  glRasterPos2i(-1,-1);
+  glDrawPixels(IMAGE_WIDTH, IMAGE_HEIGHT, GL_RGBA, GL_UNSIGNED_BYTE, image);
+  glFlush();
+  glutSwapBuffers();
+}
+
+float clamp( float arg ) {
+  if (arg < 0.0) {
+    return 0.0;
+  }
+  if (arg > 1.0) { 
+    return 1.0;
+  }
+  return arg;
+}
+
+void myIdle() {
+  for (int i = 0; i < 50; i++) {
+    if (pos < IMAGE_WIDTH*IMAGE_HEIGHT) {
+      int i = pos % IMAGE_WIDTH;
+      int j = pos / IMAGE_WIDTH;
+
+      float u = (2.0*i)/(float)IMAGE_WIDTH - 1.0;
+      float v = (2.0*j)/(float)IMAGE_HEIGHT - 1.0;
+
+      glm::vec3 origin = glm::vec3(u, v, 1.0);
+      glm::vec3 dir    = origin - glm::vec3(0.0, 0.0, 4.0);
+      dir = glm::normalize(dir);
+
+      glm::vec3 color = raytrace( origin, dir );
+
+      image[j][i][0] = (GLubyte)(255.0*clamp(color[0]));
+      image[j][i][1] = (GLubyte)(255.0*clamp(color[1]));
+      image[j][i][2] = (GLubyte)(255.0*clamp(color[2]));
+      pos++;
+    }
+  }
+  glutPostRedisplay();  
+}
+
+void myShutdown() {
+}
+
+int main(int argc, char **argv) {
+    // Initialization of GLUT
+  glutInit(&argc, argv);
+  glutInitContextVersion(3, 1);
+  glutInitContextFlags(GLUT_DEBUG);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+  glutInitWindowSize(IMAGE_WIDTH, IMAGE_HEIGHT);
+  glutCreateWindow( __FILE__ );
+
+  // Init GLEW
+  GLenum err = glewInit();
+  if (GLEW_OK != err) {
+    std::cerr << "Error: " << glewGetErrorString(err) << std::endl;
+    return 1;
+  } 
+
+  if(!GLEW_VERSION_3_1) {
+    std::cerr << "Driver does not support OpenGL 3.1" << std::endl;  
+    return 1;
+  }
+  
+  // Attach handlers
+  glutDisplayFunc(myDisplay);
+  glutIdleFunc(myIdle);
+  
+  // A nasty trick to get a shutdown handler
+  atexit(myShutdown);
+  
+  // Application specific initialization
+  myInit();
+  
+  // Run the GLUT main loop
+  glutMainLoop();
+  return 0;
+}
