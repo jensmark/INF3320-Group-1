@@ -7,10 +7,8 @@
 
 #include <cstdlib>
 #include <iostream>
-#ifdef WIN23
 #include <GL/glew.h>
-#endif
-#include <GLUT/glut.h>
+#include <GL/freeglut.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
