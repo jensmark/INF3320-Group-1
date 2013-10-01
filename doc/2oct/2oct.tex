@@ -1,0 +1,175 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{xcolor,colortbl}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{multirow}
+
+\title{INF3320 Group Meeting}
+\author{Jens Kristoffer Reitan Markussen}
+\date{\today}
+\subject{Informatics}
+\begin{document}
+	\begin{frame}
+	    \frametitle{Obligatory Exercises}
+	    \framesubtitle{Evaluation Point System for Source Code}
+	    \begin{center}
+	    \scalebox{0.55}{
+		\begin{tabular}{ |l|l|l| }
+			\hline
+			Area & Points & Explanation \\ \hline
+			\multirow{4}{*}{Compilers} 
+			& \cellcolor{red!85} 0 & \cellcolor{red!85} Does not compile because of errors \\
+ 			& \cellcolor{red!85} 1 & \cellcolor{red!85} Does not compile because of linking problems
+ 			 solvable by student \\
+ 			& \cellcolor{green!85} 2 & \cellcolor{green!85} Compiles with warnings OR does not compile 
+ 			due to linking problems not solvable by student \\
+	 		& \cellcolor{green!85} 3 & \cellcolor{green!85} Compiles without problems or
+	 		 warnings\\ \hline
+			\multirow{4}{*}{Runs}
+ 			& \cellcolor{red!85} 0 & \cellcolor{red!85} Runs not at all or does not do the task \\
+ 			& \cellcolor{red!85} 1 & \cellcolor{red!85} Starts, but breaks after some time or after 
+ 			some specific action due to major error \\
+ 			& \cellcolor{green!85} 2 &\cellcolor{green!85} Starts, but breaks after some time or after 
+ 			some specific action due to minor error \\
+	 		& \cellcolor{green!85} 3 & \cellcolor{green!85} Runs without problem \\ \hline
+			\multirow{5}{*}{Exercise}
+ 			& \cellcolor{red!85} 0 & \cellcolor{red!85} Exercise not solved or understood at all \\
+ 			& \cellcolor{red!85} 1 & \cellcolor{red!85} Good effort but did not get very far \\
+ 			& \cellcolor{red!85} 2 & \cellcolor{red!85} Main parts of exercise solved, but details 
+ 			are missing OR/AND insight seems to be missing \\
+	 		& \cellcolor{green!85} 3 & \cellcolor{green!85} Exercise solved with minor errors/problems \\
+	 		& \cellcolor{green!85} 4 & \cellcolor{green!85} Exercise solved \\ \hline
+	 		\multirow{4}{*}{Code Quality}
+ 			& \cellcolor{red!85} 0 & \cellcolor{red!85} "Spaghetti code" - unreadable \\
+ 			& \cellcolor{red!85} 1 & \cellcolor{red!85} Poor: badly structured, no error/failure handling \\
+ 			& \cellcolor{green!85} 2 & \cellcolor{green!85} Acceptable: readable, sufficiently structured, 
+ 			most/main errors handled \\
+	 		& \cellcolor{green!85} 3 & \cellcolor{green!85} Good: structured, errors handled, efficient, 
+	 		easy readable \\ \hline
+	 		\multirow{4}{*}{Comments}
+ 			& \cellcolor{red!85} 0 & \cellcolor{red!85} None \\
+ 			& \cellcolor{red!85} 1 & \cellcolor{red!85} Repeats code \\
+ 			& \cellcolor{green!85} 2 & \cellcolor{green!85} Bare minimum \\
+	 		& \cellcolor{green!85} 3 & \cellcolor{green!85} Good \\
+			\hline
+		\end{tabular}
+		}
+	    \end{center}
+    
+  	\end{frame}
+
+	\begin{frame}
+	\frametitle{Source Control}
+	\framesubtitle{GitHub}
+	
+	\begin{center}
+	
+	Easy to follow tutorial for setting up git on your machine: \\
+	https://help.github.com/articles/set-up-git
+	
+	\end{center}
+	Download a git client of choice if you don't like to use terminal commands
+	\end{frame}	  	
+  	
+	\begin{frame}
+	\frametitle{Source Control cont.}
+	\framesubtitle{GitHub}
+	Some useful commands
+	\begin{itemize}
+	\item clone - clones a remote repository from url
+	\item pull - pull updates from remote
+	\item push - push latest committed changes
+	\item commit - commit changes made locally
+	\item rm - remove a file from source control
+	\item add - add a new file to source control
+	\item status - prints out the current status of local repo.
+	\end{itemize}
+	
+	Syntax:\\
+	git [command] [options] \\
+	Example:\\
+	git clone git@github.com:jkrmc12/INF3320-Group-1.git \\
+	cd INF3320-Group-1 \\
+	git add doc/2oct/2oct.tex \\
+	git commit \\
+	git push \\
+	
+	\end{frame}  	
+  	
+	\begin{frame}
+		\frametitle{Source Control cont.}
+		\framesubtitle{GitHub}
+		When using source control when working on the obligatory assignments you are required to use private repositories. \\ 
+		On GitHub only public repositories are free, however you can upgrade to a students account and get five private repositories for free.\\
+		https://github.com/edu
+		
+	\end{frame}	  	
+  	
+  	\begin{frame}
+    		\frametitle{Exercise 5.1}
+		\begin{center}
+    		Describe the difference between flat, Gouraud, and Phong-shading.
+		\end{center}		    		
+  	\end{frame}
+
+	\begin{frame}
+    		\frametitle{Exercise 5.1}
+    		\framesubtitle{Solution}
+		\textbf{Solution:}	
+		The main difference between shading models is the level at which lighting
+calculations are done (primitive, vertex or fragment).
+Flat shading evaluates the lighting model once for each triangle, and fills the triangle with
+that colour.
+Gouraud shading evaluates the lighting model at each of the three vertices and interpolates
+the colour to determine the fragment colours inside the triangle.
+Phong shading evaluates the lighting model per fragment. The normal vector is interpolated
+(and normalized) over the triangle.		    		
+		    
+  	\end{frame}
+  	
+  	\begin{frame}
+  		\frametitle{Exercise 5.2}
+    		Given a point $\vec{p}$ on a surface with surface normal $\vec{n}$ and a light ray coming from a medium with refraction index $\eta _2$ and is refracted into a medium with refraction index $\eta _2$. The
+incoming light ray makes the angle $\theta$ with the surface normal.
+Make a small drawing and set up the relevant expressions for the refracted direction.
+When do total reflection happen?
+  	\end{frame}
+
+	\begin{frame}
+		\frametitle{Exercise 5.2}
+		\framesubtitle{Solution}
+		$\vec{r}$: Refracted direction \\
+		$\vec{i}$: Incoming light \\
+		$\vec{n}$: Surface normal \\
+				
+		Define $\vec{r}$ as:
+		\begin{align}
+		\vec{r} = \alpha \vec{i} + \beta \vec{n}
+		\end{align}
+		Since be know $\vec{r}$ lies in the plane spanned by the incoming light vector $\vec{i}$ and surface $\vec{n}$. \\
+		Snell's Law
+		\begin{align}
+		\eta_1 \sin \theta = \eta_2 \sin \theta_{r}
+		\end{align}
+		$\theta_{r}$ is an angle the refracted direction vector $\vec{r}$ makes with $-\vec{n}$		
+		
+	\end{frame}	
+	
+	\begin{frame}
+		\frametitle{Exercise 5.2}
+		\framesubtitle{Solution cont.}
+		
+		Total reflection happens when two conditions are fulfilled:
+		
+		\begin{enumerate}
+\item[(a)] The index of refraction of the medium the light is traveling from is greater than the
+index of refraction of the medium the light is traveling to
+$\eta_1 > \eta_2$
+\item[(b)] The angle of incidence (angle between the light vector and surface normal) is grater
+than the critical angle given by'
+$\theta_c = \sin^{-1} \left(\frac{\eta_2}{\eta_1}\right)$
+\end{enumerate}
+	\end{frame}		
+\end{document}
