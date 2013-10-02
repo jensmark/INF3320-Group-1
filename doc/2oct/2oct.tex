@@ -101,8 +101,8 @@
 	\begin{frame}
 		\frametitle{Source Control cont.}
 		\framesubtitle{GitHub}
-		When using source control when working on the obligatory assignments you are required to use private repositories. \\ 
-		On GitHub only public repositories are free, however you can upgrade to a students account and get five private repositories for free.\\
+		When using source control on the obligatory assignments you are required to use private repositories. \\ 
+		On GitHub only public repositories are free, however you can upgrade to a students account and get five private repositories.\\
 		https://github.com/edu
 		
 	\end{frame}	  	
@@ -136,9 +136,35 @@ incoming light ray makes the angle $\theta$ with the surface normal.
 Make a small drawing and set up the relevant expressions for the refracted direction.
 When do total reflection happen?
   	\end{frame}
-
+	
 	\begin{frame}
 		\frametitle{Exercise 5.2}
+		\framesubtitle{Solution}
+		
+		Total reflection happens when two conditions are fulfilled:
+		
+		\begin{enumerate}
+\item[(a)] The index of refraction of the medium the light is traveling from is greater than the
+index of refraction of the medium the light is traveling to
+$\eta_1 > \eta_2$
+\item[(b)] The angle of incidence (angle between the light vector and surface normal) is grater
+than the critical angle given by'
+$\theta_c = \sin^{-1} \left(\frac{\eta_2}{\eta_1}\right)$
+\end{enumerate}
+	\end{frame}		
+
+	\begin{frame}
+			\frametitle{Exercise 5.3}
+		Given the unit vector $\vec{i}$ that describes the direction of a light ray and a surface normal $\vec{n}$,
+start with Snell’s law and show that the refracted light direction is
+	\begin{align}
+	\vec{r} = \frac{\eta_1}{\eta_2}\vec{i}+\left(\frac{\eta_1}{\eta_2}(\vec{n}\cdot\vec{i})-\sqrt{1-\left(\frac{\eta_1}{\eta_2}\right)^2 (1-(\vec{n}\cdot\vec{i})^2)}\right)\vec{n}
+	\end{align}
+
+	\end{frame}
+
+	\begin{frame}
+		\frametitle{Exercise 5.3}
 		\framesubtitle{Solution}
 		$\vec{r}$: Refracted direction \\
 		$\vec{i}$: Incoming light \\
@@ -153,23 +179,23 @@ When do total reflection happen?
 		\begin{align}
 		\eta_1 \sin \theta = \eta_2 \sin \theta_{r}
 		\end{align}
-		$\theta_{r}$ is an angle the refracted direction vector $\vec{r}$ makes with $-\vec{n}$		
+		$\theta_{r}$ is an angle the refracted direction vector $\vec{r}$ makes with $-\vec{n}$	\\
+		\begin{center}
+			Find $\alpha$ and $\beta$ by solving the equations Snells law and the fact that $\vec{r}$ is of unit length
+			\begin{align}
+				\|\vec{r}\| = \|\alpha \vec{i} + \beta \vec{n}\| = 1
+			\end{align}
+		\end{center}			
 		
 	\end{frame}	
-	
+
 	\begin{frame}
-		\frametitle{Exercise 5.2}
+		\frametitle{Exercise 5.3}
 		\framesubtitle{Solution cont.}
-		
-		Total reflection happens when two conditions are fulfilled:
-		
-		\begin{enumerate}
-\item[(a)] The index of refraction of the medium the light is traveling from is greater than the
-index of refraction of the medium the light is traveling to
-$\eta_1 > \eta_2$
-\item[(b)] The angle of incidence (angle between the light vector and surface normal) is grater
-than the critical angle given by'
-$\theta_c = \sin^{-1} \left(\frac{\eta_2}{\eta_1}\right)$
-\end{enumerate}
-	\end{frame}		
+		Try to find $\theta_r$, it can be expressed as:
+		\begin{align}
+		 \cos \theta_r =(-\vec{n} \cdot (\alpha \vec{i} + \beta \vec{n}))
+		\end{align}
+	\end{frame}
+
 \end{document}
