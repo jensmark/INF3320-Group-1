@@ -1,0 +1,27 @@
+Note about compiling under some Linux systems
+
+It turns out that some versions of the gcc linker behaves a little different from each other.
+
+In the handout makefile the linked libraries is specified after code to compile.
+
+All the required libraries, GLM, Freeglut, glew and boost are all available on the ubuntu store for easy installation.  
+
+on line 61:
+$(APP): $(OBJECTS)
+	$(LD) -o $(APP) $(LDFLAGS) $(OBJECTS)
+
+switching it around to worked on ubuntu running in a virtual machine:
+$(APP): $(OBJECTS)
+	$(LD) -o $(APP) $(OBJECTS) $(LDFLAGS)
+
+If you wish to compile in a virtual machine, you might have to change the a few lines of code in the examples to get them to compile at a lower OpenGL context (my WMware fusion virtual machine only supports OpenGL 2.1 when running ubuntu)
+
+change or remove these lines
+glutInitContextVersion(3, 1);
+…
+if(!GLEW_VERSION_2_1) {
+  std::cerr << "Driver does not support OpenGL 3.1" << std::endl;  
+  return 1;
+}
+Note that this might not work with every exercise/oblig as they might require functionality from OpenGL 2.1+
+
