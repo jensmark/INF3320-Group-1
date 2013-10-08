@@ -1,0 +1,83 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{xcolor,colortbl}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{hyperref}
+\hypersetup{
+    bookmarks=true,         % show bookmarks bar?
+    unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+    pdftoolbar=true,        % show Acrobat’s toolbar?
+    pdfmenubar=true,        % show Acrobat’s menu?
+    pdffitwindow=false,     % window fit to page when opened
+    pdfstartview={FitH},    % fits the width of the page to the window
+    pdftitle={My title},    % title
+    pdfauthor={Author},     % author
+    pdfsubject={Subject},   % subject of the document
+    pdfcreator={Creator},   % creator of the document
+    pdfproducer={Producer}, % producer of the document
+    pdfkeywords={keyword1} {key2} {key3}, % list of keywords
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+
+\title{INF3320 Group Meeting}
+\author{Jens Kristoffer Reitan Markussen}
+\date{\today}
+\subject{Informatics}
+\begin{document}
+	\begin{frame}
+	\frametitle{Exercies}
+	\framesubtitle{From exercises1.pdf}
+	\begin{enumerate}
+	\item Review your knowledge about vectors, points and matrices. What are vectors? What operations are allowed on vectors, what do they mean geometrically and what are their properties? How are points different from vectors? What operations are allowed on points? What
+are matrices and why are they useful for us?
+
+	\item Write a program that draws a white square. Use Vertex Buffer Objects and Vertex Array Objects to manage your geometry. You can start from the file ex2-1\_white\_square.cpp.template.
+
+	\end{enumerate}
+	\end{frame}
+	
+	\begin{frame}
+	\frametitle{Exercies}
+	\framesubtitle{From exercises2.pdf}
+	\begin{enumerate}
+	\item Animate the white square from previous exercise set so that it rotates. By adding glutPostRedisplay
+in the idle function you trigger rendering events continuously.
+The number of degrees you rotate should depend on how long the program has been run-
+ning so that the speed of rotation is constant regardless of how often rendering events are
+triggered. Look at the timer class in the boost library.
+You can start from the file ex2-2\_rotating\_square.cpp.template.
+	\item Make a program that draws a Koch snowflake. Let ’+’ and ’-’ increase and decrease the
+number of iterations. Make sure the number of iterations is never below 0...
+You can start from the file ex2-3\_koch.cpp.template.
+
+
+
+	\end{enumerate}
+	\end{frame}
+	
+	\begin{frame}
+	\frametitle{Exercies}
+	\framesubtitle{Extra}
+	
+	\begin{enumerate}
+	\item[-]	For those who are finished with all the earlier exercises, try to complete the first obligatory exercises from last years class.
+	\item[-] In this exercise we will construct and display a approximation to a Sierpinski Gasket fractal. The
+main objectives of this exercise are setting up OpenGL environment, constructing the geometry
+of Sierpinski Gasket and displaying it.
+	\item[-] \href{http://folk.uio.no/bartloms/teaching/INF3320/2012/obligs/oblig1.pdf}{http://folk.uio.no/bartloms/teaching/INF3320/2012/obligs/oblig1.pdf}
+\end{enumerate}		
+
+	 
+
+
+	\end{frame}
+
+\end{document}
