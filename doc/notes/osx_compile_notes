@@ -1,0 +1,32 @@
+Notes about compiling under Mac OS X 10.5.8
+
+Installing glew:
+	* 	Download the glew source and unzip/untar to a location of choice
+	* 	navigate to this folder in terminal and run the makefile
+			make
+	* 	Then when the compilation has finished (it will probably compile with some warnings, ignore them)
+	* 	Install the libary at default folder
+			sudo -s
+			make install
+			make clean
+	* 	The glew libary should now be installed at /usr/lib/ and /usr/include/
+
+Installing GLM:
+	* 	Download the GLM source and unzip
+	*	GLM is a header-only libary so we do not need to build it
+	* 	Move or copy the glm folder within the unziped archive to 
+		/usr/include/
+
+The freeglut implementation is found for mac did not support an opengl 3.2 context, instad I used the official glut implementation by apple and it seems to work.
+
+To use this glut version instad of freeglut you need to modify some parts of the exercise source
+	*	Replace #include <GL/freeglut.h> with #include <GLUT/glut.h>
+	*	Comment out or remove these two function calls:
+			glutInitContextVersion(3, 1);
+			glutInitContextFlags(GLUT_DEBUG);
+
+On my macbook pro, opengl 3.1 and 3.2 were only fully supported in core profile, however, the exercies use functionallity that requires a compatibility profile (old opengl API calls), if you have this same possible you need to:
+	1. rewrite all old API calls to 3.2 core profile functionallity (hard for people unexperienced with opengl)	
+		*	Add the GLUT_3_2_CORE_PROFILE flag to glutInitDisplayMode(...) function
+				glutInitDisplayMode(GLUT_3_2_CORE_PROFILE | ...);
+	2. Create a compatibility context and change the glew version check to 2.1 instad of 3.1, this will work with most exercies until we get to programmable pipeline, unless you are content with using shader language 1.20
