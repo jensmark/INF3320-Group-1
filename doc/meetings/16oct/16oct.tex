@@ -1,0 +1,102 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{xcolor,colortbl}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{hyperref}
+\hypersetup{
+    bookmarks=true,         % show bookmarks bar?
+    unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+    pdftoolbar=true,        % show Acrobat’s toolbar?
+    pdfmenubar=true,        % show Acrobat’s menu?
+    pdffitwindow=false,     % window fit to page when opened
+    pdfstartview={FitH},    % fits the width of the page to the window
+    pdftitle={My title},    % title
+    pdfauthor={Author},     % author
+    pdfsubject={Subject},   % subject of the document
+    pdfcreator={Creator},   % creator of the document
+    pdfproducer={Producer}, % producer of the document
+    pdfkeywords={keyword1} {key2} {key3}, % list of keywords
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+
+\title{INF3320 Group Meeting}
+\author{Jens Kristoffer Reitan Markussen}
+\date{\today}
+\subject{Informatics}
+\begin{document}
+
+	\begin{frame}
+	\frametitle{Exercises}
+	Continue working with the exercises from last weeks meeting if
+	you didn't finish them, solutions for all tasks except the extra task
+	are published on the git repository.
+	\end{frame}
+
+	\begin{frame}
+	\frametitle{Exercises}
+	\framesubtitle{From exercises2.pdf}
+	\begin{enumerate}
+	\item Make a program that draws a sequence of points joined together by line segments. The
+user should be able to click on a point with the mouse and drag it around.
+This program forms the basis for a later exercise involving curves.
+In the function myMousePress you need to find out which of the points in points is
+nearest the cursor, and if the point is close enough, update selected with the index of
+this point.
+In the function myMouseMotion we check whether selected is different from -1. If
+it is then we update the point with the given index to the position of the cursor.
+If the user clicks on a line segment, a new point is created between the end points of the
+segment thus splitting the segment into two. If the user clicks with the right mouse button
+on a point the point is removed.
+You can start from the file ex2-4\_polylinemanip.cpp.template. \\
+See also LineSegment.hpp
+
+	\end{enumerate}
+	\end{frame}
+	
+	\begin{frame}
+	\frametitle{Exercises}
+	\framesubtitle{From exercises4.pdf}
+	\begin{enumerate}
+	\item[1] Formulate a sequence of OpenGL calls that sets the MODELVIEW matrix to represent a rotation of $\theta$ around the axis given by the two points $[1,1,4]$ and $[3,4,7]$. Also formulate a sequence of GLM matrix operations that achieves the same result.
+	
+
+	\end{enumerate}
+	\end{frame}
+	
+	\begin{frame}
+	\begin{enumerate}
+\item[2] Given a bounding box defined by
+	\begin{align*}
+	\mathbb{B}=\{[x,y,z]:-1\leq x\leq 1\, -1\leq y\leq 1\, -3\leq x\leq -1\}
+	\end{align*}
+The MODELVIEW and PROJECTION matrices are identity matrices.
+Formulate a sequence of calls to glFrustum and other transformation functions s.t. the
+complete bounding box is inside the frustum. Also formulate a sequence of GLM matrix
+operations that achieves the same result.	
+	
+	\item[3] Then, assume the bounding box are given by
+	\begin{align*}
+	\mathbb{B}=\{[x,y,z]:-1\leq x\leq 1\, -1\leq y\leq 1\, -1\leq x\leq 1\}
+	\end{align*}	
+	 The MODELVIEW and PROJECTION matrices are identity matrices.
+What is the simplest sequence of OpenGL calls s.t. the complete bounding box is inside the
+frustum? What is the sequence of GLM matrix operations that achieves the same result?
+
+	\end{enumerate}
+	\end{frame}
+	
+	\begin{frame}
+	\frametitle{Exercises}
+	Placeholder for robot-arm exercise if I manage to finish preparing it in time.
+	\end{frame}
+
+\end{document}
