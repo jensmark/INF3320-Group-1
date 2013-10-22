@@ -1,0 +1,14 @@
+varying vec3 pass_v;
+varying vec3 pass_n;
+
+void main() {
+	vec4 pos = gl_ModelViewMatrix * gl_Vertex;
+	
+	float homogeneous_divide = (1.0f/gl_ModelViewMatrixInverse[3].w);
+	vec3 cam_pos_world = gl_ModelViewMatrixInverse[3].xyz*homogeneous_divide;
+
+	pass_v = normalize(cam_pos_world - gl_Vertex.xyz);
+	pass_n = gl_Normal;
+
+	gl_Position = gl_ProjectionMatrix * pos;
+}

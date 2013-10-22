@@ -1,0 +1,92 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{xcolor,colortbl}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{hyperref}
+\hypersetup{
+    bookmarks=true,         % show bookmarks bar?
+    unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+    pdftoolbar=true,        % show Acrobat’s toolbar?
+    pdfmenubar=true,        % show Acrobat’s menu?
+    pdffitwindow=false,     % window fit to page when opened
+    pdfstartview={FitH},    % fits the width of the page to the window
+    pdftitle={My title},    % title
+    pdfauthor={Author},     % author
+    pdfsubject={Subject},   % subject of the document
+    pdfcreator={Creator},   % creator of the document
+    pdfproducer={Producer}, % producer of the document
+    pdfkeywords={keyword1} {key2} {key3}, % list of keywords
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+
+\title{INF3320 Group Meeting}
+\author{Jens Kristoffer Reitan Markussen}
+\date{\today}
+\subject{Informatics}
+\begin{document}
+
+	\begin{frame}
+	\frametitle{Exercises - Shaders}
+	\framesubtitle{From exercises14.pdf}
+	Along with this exercise you are provided with a program to test your shaders. The program takes vertex shader as a first and fragment shader as the second command line parameter.
+Simple rotation mechanism is available using keys 'w', 's', 'a' and 'd'. Different models are
+available using keys '1', '2', '3'. Filename - ex14-1\_shaders.cpp. \\ \textit{PS: I made some modifications to the handout used last year, so remember to use the one from this git repo, not the one from last years semester page.}
+
+	\end{frame}
+	
+	\begin{frame}
+	\frametitle{Lighting equations}
+	\begin{enumerate}
+			
+	\item[-] Ambient light $\quad I_{amb} = M_{amb}L_{amb}$
+	\item[-] Diffuse light $\quad I_{diff} = M_{diff}L_{diff}(\hat{n}\cdot \hat{l})$
+	\item[-] Specular light $\quad I_{spec} = M_{spec}L_{spec}(\hat{n}\cdot \hat{h}), \hat{h}=\frac{l+v}{||l+v||}$
+\end{enumerate}
+	Built-in GLSL variables reference:\\
+	\url{http://mew.cx/glsl_quickref.pdf}
+	
+	\end{frame}		
+	
+	\begin{frame}
+	\frametitle{Exercises - Shaders}
+	\framesubtitle{From exercises14.pdf cont.}
+	\begin{enumerate}
+	\item Write a vertex and fragment shader that will assign a $(1,0,0)$ color to each fragment.
+	\item Write a vertex and fragment shader that will replicate a GL\_FLAT behavior of the fixed pipeline.
+	\item Write a vertex and fragment shader that will replicate a GL\_SMOOTH behavior of the fixed pipeline - i.e. Gouard shading.	
+	\item Write a vertex and fragment shader that will perform Phong shading.
+	\end{enumerate}
+
+	\end{frame}
+
+	\begin{frame}
+		\frametitle{Exercises - Shaders}
+	\framesubtitle{Extra, Hard}
+	Use what you learned about refractions/reflections, and try to implement Fresnel shading.
+	\begin{enumerate}
+	\item Compute reflection and refraction vector using snell's law (GLSL already has functions for this, you just need to provide a $\eta$ value)
+	\item Use the vectors as texture coordinates to fetch a reflected and refracted color value from a cube map (environment mapping)\\
+	vec3 refl\_uv = reflect(-v, n);\\
+	vec3 refr\_uv = refract(-v, n, eta);\\
+	vec4 refl = textureCube(cube\_tex, -refl\_uv);\\
+	vec4 refr = textureCube(cube\_tex, -refr\_uv);\\
+	\item Compute ratio of reflectance using Schlick's approximation
+	\begin{align*}
+	R_F({\theta_i}) \approx R_F({\theta^0})+(1-R_F({\theta^0}))(1-\cos_{\theta_i})^5 
+	\end{align*}
+	\begin{align*}
+	 R_F({\theta^0}) = \left(\frac{\eta_2-\eta_1}{\eta_2+\eta_1}\right)^2, \quad \cos_{\theta_i} = (v\cdot n)
+	\end{align*}
+	\end{enumerate}
+	\end{frame}
+
+\end{document}

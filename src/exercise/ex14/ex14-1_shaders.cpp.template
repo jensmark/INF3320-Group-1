@@ -6,22 +6,27 @@
  */
 
 #include <string>
-#include <gl/glut.h>
+#include <GL/glew.h>
+#include <GL/freeglut.h>
 #include "OpenGLError.hpp"
 #include "ReadTextfile.hpp"
+#include "CubeMap.hpp"
 
 //Shaders source
 std::string vertexShader = "";
 std::string fragmentShader = "";
 
 //Shader OpenGL identifies
-GLuint vertexShaderId = -1;
-GLuint fragmentShaderId = -1;
-GLuint shaderProgramId = -1;
+GLint vertexShaderId = -1;
+GLint fragmentShaderId = -1;
+GLint shaderProgramId = -1;
 
 //Rotation variables
 GLdouble rotationX = 0;
 GLdouble rotationY = 0;
+
+//Background cubemap
+CubeMap* 	cubemap; 
 
 //Model type
 enum ModelType {
@@ -117,6 +122,8 @@ void myInit()
 {
   //Default clear color
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
   
   //Light atributes
   GLfloat black_light[]     = {  0.0f,  0.0f,  0.0f,  1.0f };
@@ -136,6 +143,8 @@ void myInit()
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
+  
+  cubemap = new CubeMap("cubemap/");
   
   //Compile shaders
   setupShaders();
@@ -173,12 +182,14 @@ void myDisplay()
   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
   glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess);
   
+  cubemap->render();
+  
   //Use shaders
   if(shaderProgramId != -1)
   {
     glUseProgram(shaderProgramId);
   }
-  
+  cubemap->bind();
   //Setup & draw model
   switch(currentModel)
   {
@@ -192,6 +203,7 @@ void myDisplay()
       glutSolidTorus(0.5f, 1.0f, 20, 20);
       break;
   }
+  cubemap->unbind();
   
   
   //Flush and swap buffers
@@ -241,7 +253,7 @@ void myKeyboard(unsigned char key, int /*x*/, int /*y*/)
 	switch(key)
   {
     case 'q': 
-      std::exit(0); 
+      exit(0); 
       break;  
     case 'w': 
       rotationX -= 5.0f;
@@ -278,24 +290,34 @@ int main(int argc, char **argv)
   //Load vertex shader
   if(argc >= 2)
   {
-    vertexShader = ReadTextfile(argv[1]);
+    vertexShader = GfxUtil::ReadTextfile(argv[1]);
   }
   
   //Load fragment shader
   if(argc >= 3)
   {
-    fragmentShader = ReadTextfile(argv[2]);
+    fragmentShader = GfxUtil::ReadTextfile(argv[2]);
   }
   
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutInitWindowSize(800, 600);
-	glutCreateWindow( __FILE__ );
-	glutDisplayFunc(myDisplay);
+  glutInit(&argc, argv);
+  glutInitContextVersion(3, 1);
+  glutInitContextFlags(GLUT_DEBUG);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+  glutInitWindowSize(800, 600);
+  glutCreateWindow( __FILE__ );
+
+  // Init GLEW
+  GLenum err = glewInit();
+  if (GLEW_OK != err) {
+    std::cerr << "Error: " << glewGetErrorString(err) << std::endl;
+    return 1;
+  } 
+	
+  glutDisplayFunc(myDisplay);
   glutReshapeFunc(myReshape);
-	glutKeyboardFunc(myKeyboard);
+  glutKeyboardFunc(myKeyboard);
   
-	myInit();
-	glutMainLoop();
-	return 0;
+  myInit();
+  glutMainLoop();
+  return 0;
 }
