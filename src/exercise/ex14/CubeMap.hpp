@@ -42,7 +42,7 @@ public:
 			varying vec3 tex_coord;\
 			uniform mat4 tex_rotate;\
 			void main() {\
-				vec4 pos = gl_ProjectionMatrix*gl_ModelViewMatrix * vec4(gl_Vertex.xyz*2.0, 1.0);\
+				vec4 pos = gl_ProjectionMatrix*gl_ModelViewMatrix * vec4(gl_Vertex.xyz*5.0, 1.0);\
 				tex_coord = -gl_Vertex.xyz;\
 				gl_Position = pos;\
 			}";
