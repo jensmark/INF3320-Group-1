@@ -1,0 +1,84 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{xcolor,colortbl}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{hyperref}
+\hypersetup{
+    bookmarks=true,         % show bookmarks bar?
+    unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+    pdftoolbar=true,        % show Acrobat’s toolbar?
+    pdfmenubar=true,        % show Acrobat’s menu?
+    pdffitwindow=false,     % window fit to page when opened
+    pdfstartview={FitH},    % fits the width of the page to the window
+    pdftitle={My title},    % title
+    pdfauthor={Author},     % author
+    pdfsubject={Subject},   % subject of the document
+    pdfcreator={Creator},   % creator of the document
+    pdfproducer={Producer}, % producer of the document
+    pdfkeywords={keyword1} {key2} {key3}, % list of keywords
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+
+\title{INF3320 Group Meeting}
+\author{Jens Kristoffer Reitan Markussen}
+\date{\today}
+\subject{Informatics}
+\begin{document}
+
+	\begin{frame}
+	\frametitle{Exercises - Theoretical}
+	\framesubtitle{Half-edge data structure}
+	\begin{enumerate}
+	\item Sketch up the half-edge data structure in pseudo (or C/C++) code 
+	\item Some adjacency queries we might want to make on a triangle mesh are:
+		\begin{enumerate}
+		\item[a] Which triangles use this vertex?
+		\item[b]	 Which triangles border this edge?
+		\item[c]	 Which triangles are adjacent to this triangle?
+		\item[d] Which vertices are adjacent to this vertex?
+		\end{enumerate}	 
+		Write pseudo (or C/C++) code for how you would iterate over the the half-edge data structure to find the results of these queries.	
+		
+	\end{enumerate}
+	\end{frame}
+
+	\begin{frame}
+	\frametitle{Exercises - Theoretical}
+	\framesubtitle{From exercises10.pdf}
+	\begin{enumerate}
+	\item  Let $p_0=(-1,1)$, $p_1=(1,1)$, $p_2=(1,0)$ be the control points of a quadratic Bezier curve $p$. Evaluate $p$ at $t=\frac{1}{4}$ using the de Casteljau algorithm
+
+	\item Express a quadratic Bezier curve $p(t)=\sum^2_{i=0}p_iB_{0,2}(t)$ in monomial form, i.e., in the form $p(t)=a_0+a_1t+a_2t^2$
+	
+	\item Express a quadratic polynomial $p(t)=a_0+a_1t+a_2t^2$ in Bezier form, i.e., in the form $p(t)=\sum^2_{i=0}p_iB_{0,2}(t)$
+	\end{enumerate}
+	\end{frame}
+	
+	\begin{frame}
+	\frametitle{Exercises - Programming}
+	\framesubtitle{From exercises10.pdf}
+	\begin{center}
+	 Start from
+ex7-6\_bezier.cpp.template
+and implement the function
+deCasteljauEval
+which applies the de Casteljau algorithm to the Bezier curve defined
+by
+src\_points
+at the parameter value
+t
+(the degree of the curve is implicitly given by
+how many points there are).
+	\end{center}
+	\end{frame}
+
+\end{document}
