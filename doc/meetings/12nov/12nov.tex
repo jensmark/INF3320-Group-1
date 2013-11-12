@@ -1,0 +1,145 @@
+\documentclass[11pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{xcolor,colortbl}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{picture}
+\usepackage{multirow}
+\usepackage{hyperref}
+%\usepackage{eepic}
+%\usepackage{pstricks}
+\usepackage{tikz}
+\hypersetup{
+    bookmarks=true,         % show bookmarks bar?
+    unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+    pdftoolbar=true,        % show Acrobat’s toolbar?
+    pdfmenubar=true,        % show Acrobat’s menu?
+    pdffitwindow=false,     % window fit to page when opened
+    pdfstartview={FitH},    % fits the width of the page to the window
+    pdftitle={My title},    % title
+    pdfauthor={Author},     % author
+    pdfsubject={Subject},   % subject of the document
+    pdfcreator={Creator},   % creator of the document
+    pdfproducer={Producer}, % producer of the document
+    pdfkeywords={keyword1} {key2} {key3}, % list of keywords
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+
+\title{INF3320 Group Meeting}
+\author{Jens Kristoffer Reitan Markussen}
+\date{\today}
+\subject{Informatics}
+\begin{document}
+
+	\begin{frame}
+	\frametitle{Exercises - Theoretical}
+	\framesubtitle{Loop Subdivision}	
+	
+	\setlength{\unitlength}{5cm}
+\scalebox{0.68}{	
+	\begin{picture}(0.5,0.5)(-0.5,-0.5)
+	\thicklines
+	\put(0.0,0.0){\circle*{1}}
+	\put(0.08,0.01){0.0,0.0}
+	\put(0.0,0.0){\line(1,1){0.3}}
+	\put(0.0,0.0){\line(-1,1){0.3}}
+	\put(0.0,0.0){\line(1,0){0.5}}
+	\put(0.0,0.0){\line(-1,0){0.5}}
+	
+	\put(0.0,0.0){\line(-1,-1){0.3}}
+	\put(0.0,0.0){\line(1,-1){0.3}}
+	
+	\put(-0.3,-0.3){\line(1,0){0.6}}
+	\put(-0.3,-0.3){\circle*{1}}
+	\put(-0.22,-0.28){-0.3,-0.3}
+	
+	\put(0.3,-0.3){\line(2,3){0.2}}
+	\put(0.3,-0.3){\circle*{0.2}}
+	\put(0.38,-0.28){0.3,-0.3}
+	
+	\put(0.5,0.0){\line(-2,3){0.2}}
+	\put(0.5,0.0){\circle*{0.2}}
+	\put(0.58,0.01){0.5,0.0}
+	
+	\put(0.3,0.3){\line(-1,0){0.6}}
+	\put(0.3,0.3){\circle*{1}}
+	\put(0.38,0.32){0.3,-0.3}
+	
+	\put(-0.3,0.3){\line(-2,-3){0.2}}
+	\put(-0.3,0.3){\circle*{0.2}}
+	\put(-0.22,0.22){-0.3,0.3}
+	
+	\put(-0.5,0.0){\line(2,-3){0.2}}
+	\put(-0.5,0.0){\circle*{0.2}}
+	\put(-0.45,0.01){-0.5,0.0}
+	
+	\end{picture}
+	}
+	\\Use pen and paper and apply the loop subdivision scheme to this triangle mesh
+	\begin{enumerate}
+	\item How many new triangles do we get for each old triangle?
+	\item Write pseudo (or C/C++) code for the half-edge adjacency queries needed to create the new vertices/triangles
+	\item How do we handle the boundary?
+	\end{enumerate}
+	\end{frame}
+
+	\begin{frame}
+	\frametitle{Exercises - Theoretical}
+	\framesubtitle{$\sqrt{3}$ Subdivision}
+	
+	\setlength{\unitlength}{5cm}
+\scalebox{0.68}{	
+	\begin{picture}(0.5,0.5)(-0.5,-0.5)
+	\thicklines
+	\put(0.0,0.0){\circle*{1}}
+	\put(0.08,0.01){0.0,0.0}
+	\put(0.0,0.0){\line(1,1){0.3}}
+	\put(0.0,0.0){\line(-1,1){0.3}}
+	\put(0.0,0.0){\line(1,0){0.5}}
+	\put(0.0,0.0){\line(-1,0){0.5}}
+	
+	\put(0.0,0.0){\line(-1,-1){0.3}}
+	\put(0.0,0.0){\line(1,-1){0.3}}
+	
+	\put(-0.3,-0.3){\line(1,0){0.6}}
+	\put(-0.3,-0.3){\circle*{1}}
+	\put(-0.22,-0.28){-0.3,-0.3}
+	
+	\put(0.3,-0.3){\line(2,3){0.2}}
+	\put(0.3,-0.3){\circle*{0.2}}
+	\put(0.38,-0.28){0.3,-0.3}
+	
+	\put(0.5,0.0){\line(-2,3){0.2}}
+	\put(0.5,0.0){\circle*{0.2}}
+	\put(0.58,0.01){0.5,0.0}
+	
+	\put(0.3,0.3){\line(-1,0){0.6}}
+	\put(0.3,0.3){\circle*{1}}
+	\put(0.38,0.32){0.3,-0.3}
+	
+	\put(-0.3,0.3){\line(-2,-3){0.2}}
+	\put(-0.3,0.3){\circle*{0.2}}
+	\put(-0.22,0.22){-0.3,0.3}
+	
+	\put(-0.5,0.0){\line(2,-3){0.2}}
+	\put(-0.5,0.0){\circle*{0.2}}
+	\put(-0.45,0.01){-0.5,0.0}
+	
+	\end{picture}
+	}
+	\\Use pen and paper and apply the $\sqrt{3}$ subdivision scheme to this triangle mesh
+	\begin{enumerate}
+	\item How many new triangles do we get for each old triangle?
+	\item Write pseudo (or C/C++) code for the half-edge adjacency queries needed to create the new vertices/triangles
+	\item How do we handle the boundary?
+	\end{enumerate}	
+	\end{frame}
+
+\end{document}
