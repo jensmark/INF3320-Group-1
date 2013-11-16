@@ -1,0 +1,124 @@
+\documentclass[8pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{xcolor,colortbl}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{picture}
+\usepackage{multirow}
+\usepackage{hyperref}
+%\usepackage{eepic}
+%\usepackage{pstricks}
+\usepackage{tikz}
+\hypersetup{
+    bookmarks=true,         % show bookmarks bar?
+    unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+    pdftoolbar=true,        % show Acrobat’s toolbar?
+    pdfmenubar=true,        % show Acrobat’s menu?
+    pdffitwindow=false,     % window fit to page when opened
+    pdfstartview={FitH},    % fits the width of the page to the window
+    pdftitle={My title},    % title
+    pdfauthor={Author},     % author
+    pdfsubject={Subject},   % subject of the document
+    pdfcreator={Creator},   % creator of the document
+    pdfproducer={Producer}, % producer of the document
+    pdfkeywords={keyword1} {key2} {key3}, % list of keywords
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+
+\title{INF3320 Group Meeting}
+\author{Jens Kristoffer Reitan Markussen}
+\date{\today}
+\subject{Informatics}
+\begin{document}
+\lstset{
+      language=C,
+      tabsize=2, 
+      morekeywords={vec2, vec3, vec4, mat3, mat4, complex}
+  }  
+
+	\begin{frame}
+	\frametitle{Exercises - Programming}
+	\framesubtitle{Mandelbrot set computed and visualized on GPU}
+	\includegraphics[scale=0.35]{brot.png}
+	
+	\end{frame}
+	
+	\begin{frame}[fragile]
+	\frametitle{Exercises - Programming}
+	\framesubtitle{Mandelbrot set computed and visualized on GPU}
+	Definition: $P_c:z\rightarrow z^2 + c$\\ 
+	For all complex numbers $c$, for which $z$ does not tend towards infinity. \\
+	- If the absolute value of $z$ is larger than $2$, we tend towards infinity.  
+	\\ \bigskip
+	How to compute:
+	\begin{enumerate}
+	\item Use pixel coordinate as complex $c$
+	\item Set $z_0 = 0$
+	\item Compute $z_{n+1} = {z_n}^2 + c$
+	\item If $|z_n| > 2$ for any $n$, abort
+	\item If $n > N$, where $N$ is the max number of iterations, abort.
+	\end{enumerate}
+	
+	\bigskip
+	GLSL does not support a complex datatype, use a 2D vector type instead. We compute the absolute value of a complex number the same way as we compute the magnitude of a 2D vector, so we can use the length() function in GLSL. \\ \bigskip
+	Implement computing and visualizing of the mandelbrot set using the fragment shader, you can start from \verb|ex15/mandelbrot.frag.template|
+	
+	\end{frame}	
+	
+	\begin{frame}[fragile]
+	\frametitle{Exercises - Programming}
+	\framesubtitle{Mandelbrot set computed and visualized on GPU}
+	\begin{lstlisting}
+	//Initialize z to be c, the complex coordinate
+	complex z = c;
+	
+	//Iterate until the length of z is larger than
+	//two, or until we have reached max_iterations
+	while (|z| < 2 && i < max_iterations) {
+	  //Update the value of z according to the
+	  //formula
+	  z = z^2 + c
+	  ++i;
+	}
+	
+	if (|z| < 2) {
+	  out_color = 1; //Assumed to be part of the set
+	}
+	else {
+	  out_color = 0; //Not part of the set
+	}
+	\end{lstlisting}
+	
+	\end{frame}
+	
+	\begin{frame}[fragile]
+	\frametitle{Exercises - Programming}
+	\framesubtitle{Mandelbrot set computed and visualized on GPU}
+	Black and white is dull, we can use linear interpolation to visualize the fractal with colors
+	\begin{lstlisting}
+	if (i < max_iterations) {
+	  float t = (i-log(log(|z|)/log(2))/log(2)) / max_iterations;
+	  out_color = mix(red,green,t); //Assumed to be part of the set
+	}
+	else {
+	  out_color = 0; //Not part of the set
+	}	
+	\end{lstlisting}
+	\end{frame}
+	
+	\begin{frame}[fragile]
+	\frametitle{Exercises - Programming}
+	\framesubtitle{Mandelbrot set computed and visualized on GPU}
+	Interpolating over the RGB color space doesn't produce very interesting results, instead we can interpolate over the HSV color space, then convert it to RGB.
+	\url{http://en.wikipedia.org/wiki/HSL_and_HSV}\\ \bigskip
+	Try to interpolate between $[0,1,1]$ and $[2\pi,1,1]$ in HSV, then convert it to RGB
+	\end{frame}
+
+\end{document}
