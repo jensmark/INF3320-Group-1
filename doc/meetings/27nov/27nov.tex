@@ -1,0 +1,205 @@
+\documentclass[8pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{xcolor,colortbl}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{picture}
+\usepackage{multirow}
+\usepackage{hyperref}
+%\usepackage{eepic}
+%\usepackage{pstricks}
+\usepackage{tikz}
+\hypersetup{
+    bookmarks=true,         % show bookmarks bar?
+    unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+    pdftoolbar=true,        % show Acrobat’s toolbar?
+    pdfmenubar=true,        % show Acrobat’s menu?
+    pdffitwindow=false,     % window fit to page when opened
+    pdfstartview={FitH},    % fits the width of the page to the window
+    pdftitle={My title},    % title
+    pdfauthor={Author},     % author
+    pdfsubject={Subject},   % subject of the document
+    pdfcreator={Creator},   % creator of the document
+    pdfproducer={Producer}, % producer of the document
+    pdfkeywords={keyword1} {key2} {key3}, % list of keywords
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+
+\title{INF3320 Group Meeting}
+\author{Jens Kristoffer Reitan Markussen}
+\date{\today}
+\subject{Informatics}
+\begin{document}
+\lstset{
+      language=C,
+      tabsize=2, 
+      morekeywords={vec2, vec3, vec4, mat3, mat4, complex}
+  }  
+
+	\begin{frame}[fragile]
+	\frametitle{Exercises - Programming}
+	\framesubtitle{Simple ray-tracer}
+	The handout
+	\begin{enumerate}
+	\item[-] RayTracer
+	\begin{enumerate}
+	\item[-] addSceneObject(SceneObject*)
+	\begin{enumerate}
+	\item[-] Add a object to our scene
+	\item[-] Our ray-tracer only support spheres and the background cube map
+	\end{enumerate}
+	\item[-] render() 
+	\begin{enumerate}
+	\item[-] Shoot rays into the scene
+	\item[-] Save the result of each ray to the frame buffer
+	\end{enumerate}
+	\item[-] save(string)
+	\begin{enumerate}
+	\item[-] Saves the latest render operation to a tga image file
+	\end{enumerate}
+	\end{enumerate}
+	\end{enumerate}
+	See \verb|ex16_raytracer.cpp| for examples on how the handout is used. You are encouraged to play around with it (try to add more objects).
+
+	\end{frame}
+	
+	\begin{frame}[fragile]
+	\frametitle{Exercises - Programming}
+	\framesubtitle{Simple ray-tracer}
+	Task 1. Shooting rays.
+	\begin{enumerate}
+	\item[-] Implement shooting one ray for each pixel
+	\item[-] Start with the \verb|render()| method in \verb|RayTracer.cpp|
+	\item[-] Assume a pinhole camera where the "screen" is "1" away from camera positio. We can then write the position of a pixel relative to the camera as:
+	\end{enumerate}
+	\begin{lstlisting}
+	//[i, j] = pixel index
+	x = (i+0.5)*(screen.right-screen.left)/width + screen.left;
+	y = (j+0.5)*(screen.top-screen.bottom)/height + screen.bottom; 
+	z = -1.0f;
+	\end{lstlisting}
+	\begin{enumerate}
+	\item[-] Automatically becomes the direction of our ray.
+	\end{enumerate}
+	
+	\end{frame}
+	
+	\begin{frame}[fragile]
+	\frametitle{Exercises - Programming}
+	\framesubtitle{Simple ray-tracer}
+	Task 2. Intersection.
+	\begin{enumerate}
+	\item[-] Implement ray-sphere intersection test
+	\item[-] Start with \verb|intersect(Ray)| in \verb|Sphere.hpp| and compute $t$ for intersection point $q(t)$ (see description under)
+	\end{enumerate}
+	Ray-sphere intersection
+	\begin{enumerate}
+	\item[-] A sphere is characterized by a radius $r$, and a center $c$
+	\item[-] All points $[x,y,z]$ are on the sphere if they satisfy: 
+	\begin{align*}
+	(x-c_x)^2+(y-c_y)^2+(z-c_z)^2 = r
+	\end{align*}
+	\item[-] Simply find the point $[x, y, z]$ that satisfies the above equation closest to the camera.
+	\item[-] Lets formulate a function for a point along the direction of our ray
+	\begin{align*}
+	q(t)&=q_o+tq_d\\
+	q_o&:\text{Origin of the ray}\\
+	q_d&:\text{Direction of the ray}
+	\end{align*}
+	\item[-] Insert our function into the sphere formula.
+	\begin{align*}
+	(q(t)_x-c_x)^2+(q(t)_y-c_y)^2+(q(t)_z-c_z)^2 = r
+	\end{align*}
+	\item[-] Quadratic formula where $t$ is the only unknown.
+	\end{enumerate}
+	
+	\end{frame}
+	
+	\begin{frame}[fragile]
+	\frametitle{Exercises - Programming}
+	\framesubtitle{Simple ray-tracer}
+	\begin{enumerate}
+	\item[-] Solve using the quadratic formula to find intersections (roots of the polynomial)
+	\begin{align*}
+	t &= \frac{-b\pm\sqrt{b^2-4ac}}{2a} \\
+	a &= q_d \cdot q_d\\
+	b &= 2(q_d \cdot(q_o - c))\\
+	c &= (q_o-c)\cdot(q_o-c)-r^2
+	\end{align*}
+	\item[-]If $b^2-4ac$ is negative, we get an imaginary root; no intersection
+	\item[-]Otherwise, we hit the sphere, and the closest intersection is the smallest positive of the two roots
+	\item[-]q(t) is then the intersection point
+	\item[-] Three cases (root $t_0$ and $t_1$):
+	\begin{enumerate}
+	\item[-]One positive, one negative ($t_0t_1 < 0$):
+		Return $max(t_0, t_1)$
+	\item[-] Two positive roots: 
+		Return $min(t_0, t_1)$
+	\item[-]Two negative roots: Return $-1$ (No intersection)
+	\end{enumerate}		
+	\end{enumerate}
+	
+	\end{frame}
+	
+	\begin{frame}[fragile]
+	\frametitle{Exercises - Programming}
+	\framesubtitle{Simple ray-tracer}
+	Task 3. Reflection
+	\begin{enumerate}
+	\item[-] Implement the reflection effect
+	\item[-] Start with the \verb|ReflectiveEffect| class in \verb|SceneObjectEffect.hpp| and implement the \verb|rayTrace(Ray, float, vec3, RayTracerState)| method
+	\item[-] Spawn a new reflection ray from the intersection point $q(t)$ 
+	\item[-] You can use \verb|glm::reflect(I,N)| to create the reflection vector
+	\end{enumerate}		
+	\end{frame}
+	
+	\begin{frame}[fragile]
+	\frametitle{Exercises - Programming}
+	\framesubtitle{Simple ray-tracer}
+	\includegraphics[scale=0.40]{result.png}
+	
+	\end{frame}
+	
+	\begin{frame}[fragile]
+	\frametitle{Exercises - Programming}
+	\framesubtitle{Simple ray-tracer}
+	Extras/Possible extensions
+	\begin{enumerate}
+	\item[-] Multisampling 
+	\begin{enumerate}
+	\item[-] Spawn more rays for each pixel and combine the results
+	\end{enumerate}
+	\item[-] Shadows
+	\begin{enumerate}
+	\item[-] Every time a ray intersects with something, shoot a new ray from that point towards each light source, if the ray intersects with something, the original intersection point is in shade.
+	\end{enumerate}
+	\item[-] More objects
+	\begin{enumerate}
+	\item[-]Plane
+	\item[-]Box
+	\item[-]Triangle
+	\item[-]Triangle mesh
+	\end{enumerate}
+	\item[-] More effects
+	\begin{enumerate}
+	\item[-]Phong
+	\item[-]Fresnel
+	\begin{enumerate}
+	\item[-]Spawn two new rays; reflection and refraction
+	\item[-]Combine them using Schlicks approximation from the shader exercise
+	\end{enumerate}
+	\end{enumerate}
+	\end{enumerate}
+	
+	\end{frame}
+	
+	
+
+\end{document}
