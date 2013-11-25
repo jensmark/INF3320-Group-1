@@ -1,0 +1,85 @@
+#include "RayTracer.h"
+
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <limits>
+#include <sys/stat.h>
+#include <stdexcept>
+
+#include "CubeMap.hpp"
+
+RayTracer::RayTracer(unsigned int width, unsigned int height) {
+	const glm::vec3 camera_position(0.0f, 0.0f, 10.0f);
+
+	//Initialize framebuffer and virtual screen
+	fb = new FrameBuffer(width, height);
+	float aspect = width/static_cast<float>(height);
+	screen.top = 1.0f;
+	screen.bottom = -1.0f;
+	screen.right = aspect;
+	screen.left = -aspect;
+	
+	//Initialize state
+	state = new RayTracerState(camera_position);
+}
+
+RayTracer::~RayTracer(){
+	delete fb;
+	delete state;
+}
+
+void RayTracer::addSceneObject(SceneObject* o) {
+	state->getScene().push_back(o);
+}
+
+void RayTracer::render() {
+	//For every pixel
+	for (unsigned int j=0; j<fb->getHeight(); ++j) {
+		for (unsigned int i=0; i<fb->getWidth(); ++i) {
+			glm::vec3 out_color(0.0, 0.0, 0.0);
+			float x, y, z;
+			glm::vec3 direction;
+
+			//skip
+			
+			//Create a new ray our camera and into our scene
+			//Ray r(state->getCamPos(), direction)
+			//out_color = state->rayTrace(r);
+			
+			//unskip
+
+			//Write the color to our framebuffer
+			fb->setPixel(i, j, out_color);
+		}
+	}
+}
+
+void RayTracer::save(std::string basename) {
+	
+	struct stat buffer;
+	int i;
+	std::stringstream filename;
+
+	//Find a unique filename...
+	for (i=0; i<10000; ++i) {
+		filename.str("");
+		filename << basename << std::setw(4) << std::setfill('0') << i << "." << "tga";
+		if (stat(filename.str().c_str(), &buffer) != 0) break;
+	}
+
+	if (i == 10000) {
+		std::stringstream log;
+		log << "Unable to find unique filename for " << basename << "%d." << "tga";
+		throw std::runtime_error(log.str());
+	}
+	
+	std::vector<unsigned char> copy;
+	copy.resize(fb->getWidth()* fb->getHeight()* 3);
+	for(size_t i = 0; i < copy.size(); i++){
+		copy[i] = (unsigned char)(fb->getData()[i] * 255.0f);
+	}
+	tgaInfo* img = tgaCreate(fb->getWidth(), fb->getHeight(), 3, copy.data());
+	tgaSave(filename.str().c_str(), img);
+	tgaDestroy(img);
+}
